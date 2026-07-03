@@ -2,41 +2,43 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Q
-from .models import Publicacion, Comentario, SolicitudAmistad, Perfil, PublicacionCompartida
+from django.utils import timezone
+from datetime import timedelta
+from .models import Publicacion, Comentario, SolicitudAmistad, Perfil, PublicacionCompartida, Historia # 🆕 Añadido Historia
 
 @login_required
 def feed_home(request):
-    Perfil.objects.get_or_create(usuario=request.user)
-    
-    if request.method == 'POST':
-        texto = request.POST.get('contenido_post')
-        imagen_subida = request.FILES.get('archivo') # 🛠️ Corregido: Ahora coincide con el name="archivo" de tu HTML # Captura multimedia
-        
-        if texto or imagen_subida:
-            Publicacion.objects.create(
-                usuario=request.user, 
-                contenido=texto if texto else "",
-                archivo=imagen_subida  # 🛠️ Corregido: cambiamos 'imagen' por 'archivo'
-            )
-            return redirect('feed')
+    # 1. Lógica para crear una nueva historia
+    if request.method == 'POST' and 'subir_historia' in request.POST:
+        archivo_historia = request.FILES.get('archivo_historia')
+        if archivo_historia:
+            Historia.objects.create(usuario=request.user, archivo=archivo_historia)
+        return redirect('feed')
 
+    # 2. Filtro de historias de las últimas 24 horas
+    hace_24_horas = timezone.now() - timedelta(hours=24)
+    historias_activas = Historia.objects.filter(fecha_creacion__gte=hace_24_horas).order_by('-fecha_creacion')
+
+    # 3. Lógica del buscador y Posts del Feed (Ordenados de más reciente a más antiguo)
     busqueda = request.GET.get('q')
-    usuarios_encontrados = None # Cambiado a None por defecto
+    usuarios_encontrados = None
     
     if busqueda:
         todos_los_posts = Publicacion.objects.filter(
             Q(contenido__icontains=busqueda) | Q(usuario__username__icontains=busqueda)
-        )
-        usuarios_encontrados = User.objects.filter(username__icontains=busqueda).exclude(id=request.user.id)
+        ).order_by('-fecha_creacion')  # 👈 Asegúrate de si tu campo es 'fecha_creacion' o 'fecha_publicacion'
     else:
-        # Si no hay búsqueda, trae absolutamente todos los posts para el feed principal
-        todos_los_posts = Publicacion.objects.all()
+        # Aquí es donde va lo que buscabas originalmente:
+        todos_los_posts = Publicacion.objects.all().order_by('-fecha_creacion')
 
+    # 4. Otras consultas necesarias
     solicitudes = SolicitudAmistad.objects.filter(destinatario=request.user)
     mis_amigos = request.user.perfil.amigos.all()
 
+    # 5. UN SOLO CONTEXTO Y UN SOLO RETURN
     contexto = {
         'posts': todos_los_posts,
+        'historias': historias_activas,
         'solicitudes': solicitudes,
         'mis_amigos': mis_amigos,
         'busqueda': busqueda,

@@ -3,14 +3,22 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.validators import FileExtensionValidator
+from django.utils import timezone
 
 class Perfil(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')
     avatar = models.ImageField(upload_to='avatars/', default='avatars/default.png', blank=True, null=True)
     amigos = models.ManyToManyField(User, related_name='mis_amigos', blank=True)
+    ultima_conexion = models.DateTimeField(default=timezone.now) # 🆕 Campo para rastrear el estado Online
 
     def __str__(self):
         return f"Perfil de {self.usuario.username}"
+
+    # 🆕 Función helper para saber si está conectado ahora mismo (menos de 5 minutos)
+    def esta_online(self):
+        if self.ultima_conexion:
+            return timezone.now() - self.ultima_conexion < timezone.timedelta(minutes=5)
+        return False
 
 @receiver(post_save, sender=User)
 def crear_perfil_usuario(sender, instance, created, **kwargs):
@@ -71,3 +79,12 @@ class PublicacionCompartida(models.Model):
     usuario_que_comparte = models.ForeignKey(User, on_delete=models.CASCADE, related_name='compartidos')
     publicacion_original = models.ForeignKey(Publicacion, on_delete=models.CASCADE, related_name='veces_compartida')
     fecha_compartido = models.DateTimeField(auto_now_add=True)
+
+class Historia(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='historias')
+    # Usamos FileField para que puedan subir tanto fotos como videos .mp4 en sus historias
+    archivo = models.FileField(upload_to='stories/')
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Historia de {self.usuario.username} - {self.fecha_creacion}"
