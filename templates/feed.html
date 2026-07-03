@@ -1,120 +1,132 @@
 <!-- COLUMNA CENTRAL (FEED) -->
-<!DOCTYPE html>
+<!D<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>facebook 2 - Panel Principal</title>
     <style>
-        /* Paleta de colores personalizada: Turquesa como color primario */
         :root {
-            --primary-color: #00a896; /* Turquesa */
-            --primary-hover: #028074;
+            /* 🆕 Tu nuevo tono de color personalizado */
+            --primary-color: #2DF5CD;
+            --primary-hover: #1ed1ae;
             --bg-body: #f4f7f6;
             --bg-card: #ffffff;
             --text-main: #1a202c;
             --text-muted: #718096;
             --border-color: #e2e8f0;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: var(--bg-body); color: var(--text-main); padding-top: 70px; padding-bottom: 50px; }
-        
-        /* BARRA SUPERIOR DE BÚSQUEDA (NAVBAR) */
         .navbar { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: var(--bg-card); box-shadow: 0 2px 4px rgba(0,0,0,0.04); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 1000; }
-        .nav-logo { font-weight: 800; color: var(--primary-color); font-size: 22px; letter-spacing: -0.5px; }
+        .nav-logo { font-weight: 800; color: var(--text-main); font-size: 22px; letter-spacing: -0.5px; text-decoration: none; }
+        .nav-logo span { color: var(--primary-color); }
         .search-bar { display: flex; align-items: center; background: var(--bg-body); border-radius: 20px; padding: 6px 14px; width: 300px; border: 1px solid var(--border-color); }
         .search-bar input { border: none; background: transparent; outline: none; width: 100%; font-size: 14px; color: var(--text-main); }
         .nav-profile { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; }
-
-        /* CONTENEDOR VERTICAL */
         .main-container { max-width: 680px; margin: 20px auto; padding: 0 15px; display: flex; flex-direction: column; gap: 20px; }
-        
-        /* Componentes Globales */
         .card { background: var(--bg-card); border-radius: 12px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); border: 1px solid var(--border-color); }
         .avatar { width: 40px; height: 40px; background: #cbd5e0; border-radius: 50%; display: inline-block; flex-shrink: 0; }
         
-        /* SECCIÓN DE HISTORIAS (LAYOUT HORIZONTAL DENTRO DEL FLUJO) */
         .stories-container { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
-        .story-card { width: 100px; height: 150px; background: #cbd5e0; border-radius: 10px; position: relative; flex-shrink: 0; overflow: hidden; background-size: cover; background-position: center; border: 1px solid var(--border-color); }
-        .story-card.create { background-color: var(--bg-card); display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding-bottom: 10px; }
-        .story-avatar { position: absolute; top: 8px; left: 8px; width: 32px; height: 32px; border: 2px solid var(--primary-color); border-radius: 50%; }
-        .story-name { position: absolute; bottom: 8px; left: 8px; color: white; font-size: 11px; font-weight: 600; text-shadow: 1px 1px 2px rgba(0,0,0,0.6); }
+        .story-card { width: 110px; height: 160px; background: #cbd5e0; border-radius: 10px; position: relative; flex-shrink: 0; overflow: hidden; background-size: cover; background-position: center; border: 1px solid var(--border-color); }
+        .story-card.create { background-color: var(--bg-card); display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding-bottom: 15px; cursor: pointer; }
+        .story-avatar { position: absolute; top: 8px; left: 8px; width: 32px; height: 32px; border: 2px solid var(--primary-color); border-radius: 50%; background: #a0aec0; }
+        .story-name { position: absolute; bottom: 8px; left: 8px; color: white; font-size: 11px; font-weight: 600; text-shadow: 1px 1px 3px rgba(0,0,0,0.8); }
 
-        /* SECCIÓN DE SOLICITUDES Y AMIGOS RÁPIDOS */
         .widgets-section { display: flex; flex-direction: column; gap: 12px; }
         .widget-title { font-size: 14px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
         .widget-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed var(--border-color); }
         .widget-item:last-child { border-bottom: none; }
-        .btn-widget { background: var(--primary-color); color: white; border: none; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer; }
-        .btn-widget:hover { background: var(--primary-hover); }
-
-        /* Formulario de creación de posts */
+        .btn-widget { background: var(--text-main); color: #fff; border: none; padding: 6px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .btn-widget:hover { background: var(--primary-hover); color: var(--text-main); }
+        
         .create-post-form { display: flex; flex-direction: column; gap: 12px; }
         .create-post-input { width: 100%; padding: 12px 16px; background: var(--bg-body); border: 1px solid var(--border-color); border-radius: 24px; font-size: 15px; outline: none; }
-        .btn-submit-post { background: var(--primary-color); color: white; border: none; padding: 10px 16px; border-radius: 24px; cursor: pointer; font-weight: bold; font-size: 15px; transition: background 0.2s; }
-        .btn-submit-post:hover { background: var(--primary-hover); }
+        .btn-submit-post { background: var(--text-main); color: white; border: none; padding: 10px 16px; border-radius: 24px; cursor: pointer; font-weight: bold; font-size: 15px; transition: background 0.2s; }
+        .btn-submit-post:hover { background: var(--primary-color); color: var(--text-main); }
         
-        /* Estructura del Post */
-        .post { display: flex; flex-direction: column; gap: 12px; }
+        .post { display: flex; flex-direction: column; gap: 12px; padding: 18px 0 0 0; overflow: hidden; }
+        .post-padding { padding: 0 18px; }
         .post-header { display: flex; align-items: center; gap: 12px; }
         .post-author { font-weight: bold; color: var(--text-main); font-size: 15px; }
         .post-date { font-size: 12px; color: var(--text-muted); }
         .post-body { font-size: 15px; color: var(--text-main); line-height: 1.5; word-break: break-word; }
         
-        /* Acciones (Likes, Comentarios, Compartir) */
-        .post-actions { display: flex; gap: 5px; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 4px 0; }
-        .btn-action { background: none; border: none; padding: 8px; flex-grow: 1; border-radius: 6px; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--text-muted); }
-        .btn-action:hover { background-color: var(--bg-body); color: var(--text-main); }
+        .post-image-container { width: 100%; margin-top: 5px; background: #e2e8f0; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
+        .post-image { width: 100%; max-height: 450px; object-fit: cover; display: block; }
         
-        /* Sección de comentarios */
-        .comments-section { background: var(--bg-body); padding: 12px; border-radius: 10px; display: flex; flex-direction: column; gap: 10px; }
+        .post-actions { display: flex; gap: 5px; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); padding: 4px 0; margin: 0 18px; }
+        .btn-action { background: none; border: none; padding: 8px; flex-grow: 1; border-radius: 6px; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--text-muted); text-decoration: none;}
+        .btn-action:hover { background-color: var(--bg-body); color: var(--text-main); }
+        .comments-section { background: var(--bg-body); padding: 12px; border-radius: 10px; display: flex; flex-direction: column; gap: 10px; margin: 12px 18px 18px 18px; }
         .comments-list { display: flex; flex-direction: column; gap: 8px; }
         .comment-bubble { background: var(--bg-card); padding: 8px 12px; border-radius: 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.02); align-self: flex-start; max-width: 100%; border: 1px solid var(--border-color); }
         .comment-user { font-weight: bold; font-size: 13px; color: var(--text-main); display: block; }
         .comment-text { font-size: 14px; color: var(--text-main); margin-top: 2px; }
-        .comment-date { font-size: 11px; color: var(--text-muted); display: block; margin-top: 2px; }
         
-        /* Formulario para comentar */
         .comment-form { display: flex; gap: 8px; align-items: center; }
         .comment-input { flex-grow: 1; padding: 8px 14px; border: 1px solid var(--border-color); border-radius: 20px; font-size: 13px; outline: none; background: var(--bg-card); }
-        .btn-comment-submit { background: var(--primary-color); color: white; border: none; padding: 6px 12px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px; }
-        .btn-comment-submit:hover { background: var(--primary-hover); }
+        .btn-comment-submit { background: var(--text-main); color: white; border: none; padding: 6px 12px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px; }
     </style>
 </head>
 <body>
 
     <nav class="navbar">
-        <div class="nav-logo">facebook 2</div>
-        <div class="search-bar">
-            <input type="text" placeholder="Buscar amigos o publicaciones...">
-        </div>
-        <div class="nav-profile">
-            <div class="avatar" style="width:30px; height:30px;"></div>
-            <span>{{ request.user.username }}</span>
+        <a href="{% url 'feed' %}" class="nav-logo" style="color: var(--primary-color);">facebook 2</a>
+        <form method="GET" action="{% url 'feed' %}" class="search-bar">
+            <input type="text" name="q" placeholder="Buscar amigos o publicaciones..." value="{{ busqueda|default:'' }}">
+        </form>
+        <div class="nav-profile" style="display: flex; align-items: center; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                {% if request.user.perfil.avatar %}
+                    <img src="{{ request.user.perfil.avatar.url }}" class="avatar" style="width:30px; height:30px; object-fit: cover;">
+                {% else %}
+                    <div class="avatar" style="width:30px; height:30px; background-color: var(--primary-color);"></div>
+                {% endif %}
+                <span>{% if request.user.first_name %}{{ request.user.first_name }} {{ request.user.last_name }}{% else %}{{ request.user.username }}{% endif %}</span>
+            </div>
+            <form method="POST" action="{% url 'logout' %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" style="background: none; border: none; color: var(--text-muted); font-size: 12px; cursor: pointer; font-weight: bold; text-decoration: underline;">Salir</button>
+            </form>
         </div>
     </nav>
 
     <main class="main-container">
         
+        {% if busqueda %}
+        <div class="card">
+            <div class="widget-title">Usuarios encontrados para: "{{ busqueda }}"</div>
+            <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
+                {% for u in usuarios_encontrados %}
+                <div class="widget-item">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div class="avatar" style="width: 35px; height: 35px;"></div>
+                        <span style="font-weight: 600;">{{ u.username }}</span>
+                    </div>
+                    <form method="POST" action="{% url 'enviar_solicitud' u.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-widget">Agregar Amigo</button>
+                    </form>
+                </div>
+                {% empty %}
+                <p style="color: var(--text-muted); font-size: 13px; font-style: italic;">No se encontraron nuevos usuarios con ese nombre.</p>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
         <div class="card">
             <div class="widget-title" style="margin-bottom: 10px;">Historias</div>
             <div class="stories-container">
                 <div class="story-card create">
-                    <div style="font-size: 24px; color: var(--primary-color); font-weight: bold; position: absolute; top: 40%; text-align: center; width: 100%;">+</div>
-                    <span class="story-name" style="color: var(--text-main); font-weight: bold; text-shadow: none; text-align: center; width: 100%; left: 0;">Crear historia</span>
+                    <div style="font-size: 26px; color: var(--primary-color); font-weight: bold; position: absolute; top: 25%; text-align: center; width: 100%;">+</div>
+                    <span style="color: var(--text-main); font-weight: bold; font-size: 12px; text-align: center; width: 100%; display:block;">Crear historia</span>
                 </div>
-                <div class="story-card" style="background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="story-card" style="background-image: linear-gradient(135deg, var(--primary-color) 0%, #028074 100%);">
                     <div class="story-avatar"></div>
                     <span class="story-name">Juan Pérez</span>
-                </div>
-                <div class="story-card" style="background-image: linear-gradient(135deg, #f6d365 0%, #fda085 100%);">
-                    <div class="story-avatar"></div>
-                    <span class="story-name">María Gómez</span>
-                </div>
-                <div class="story-card" style="background-image: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);">
-                    <div class="story-avatar"></div>
-                    <span class="story-name">Andrés Silva</span>
                 </div>
             </div>
         </div>
@@ -122,101 +134,131 @@
         <div class="card widgets-section">
             <div>
                 <div class="widget-title">Solicitudes de Amistad</div>
+                {% for sol in solicitudes %}
                 <div class="widget-item">
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <div class="avatar" style="width:32px; height:32px;"></div>
-                        <span style="font-size: 14px; font-weight: 600;">Carlos Mendoza</span>
+                        <span style="font-size: 14px; font-weight: 600;">{{ sol.remitente.username }}</span>
                     </div>
-                    <button class="btn-widget">Aceptar</button>
+                    <form method="POST" action="{% url 'aceptar_solicitud' sol.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-widget">Aceptar</button>
+                    </form>
                 </div>
-            </div>
-            <div style="margin-top: 5px;">
-                <div class="widget-title">Amigos Conectados</div>
-                <div style="display: flex; gap: 12px; margin-top: 6px; overflow-x: auto;">
-                    <div style="text-align: center; font-size: 12px;">
-                        <div class="avatar" style="width:36px; height:36px; border: 2px solid #48bb78;"></div>
-                        <p>Juan</p>
-                    </div>
-                    <div style="text-align: center; font-size: 12px;">
-                        <div class="avatar" style="width:36px; height:36px; border: 2px solid #48bb78;"></div>
-                        <p>María</p>
-                    </div>
-                    <div style="text-align: center; font-size: 12px;">
-                        <div class="avatar" style="width:36px; height:36px; border: 2px solid #48bb78;"></div>
-                        <p>Andrés</p>
-                    </div>
-                </div>
+                {% empty %}
+                <p style="color: var(--text-muted); font-size: 13px; font-style: italic; margin-top: 5px;">No tienes solicitudes pendientes.</p>
+                {% endfor %}
             </div>
         </div>
         
         <div class="card">
-            <form method="POST" action="{% url 'feed' %}" class="create-post-form">
+            <form method="POST" action="{% url 'feed' %}" enctype="multipart/form-data" class="create-post-form">
                 {% csrf_token %}
                 <div style="display: flex; gap: 12px; align-items: center;">
-                    <div class="avatar"></div>
+                {% if request.user.perfil.avatar %}
+                    <img src="{{ request.user.perfil.avatar.url }}" class="avatar" style="object-fit: cover;">
+                {% else %}
+                    <div class="avatar" style="background-color: var(--primary-color);"></div>
+                {% endif %}
                     <input type="text" name="contenido_post" class="create-post-input" placeholder="¿Qué estás pensando, {{ request.user.username }}?" required>
                 </div>
-                <button type="submit" class="btn-submit-post">Publicar en el Feed</button>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 5px; border-top: 1px solid var(--border-color); padding-top: 10px;">
+                    <label style="font-size: 14px; color: var(--text-main); font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                        🖼️ <span style="border-bottom: 2px solid var(--primary-color);">Adjuntar Imagen</span>
+                        <input type="file" name="archivo" accept="image/*,video/mp4" style="display: none;" id="file-upload">
+                    </label>
+                    <button type="submit" class="btn-submit-post">Publicar</button>
+                </div>
             </form>
         </div>
 
         {% for post in posts %}
         <div class="card post">
-            
-            <div class="post-header">
-                <div class="avatar"></div>
-                <div>
-                    <div class="post-author">{{ post.usuario.username }}</div>
-                    <div class="post-date">{{ post.fecha_creacion|timesince }}</div>
+            <div class="post-padding">
+                <div class="post-header">
+                    {% if post.usuario.perfil.avatar %}
+                        <img src="{{ post.usuario.perfil.avatar.url }}" class="avatar" style="object-fit: cover;">
+                    {% else %}
+                        <div class="avatar" style="background-color: var(--primary-color);"></div>
+                    {% endif %}
+                    <div>
+                        <div class="post-author">{% if post.usuario.first_name %}{{ post.usuario.first_name }} {{ post.usuario.last_name }}{% else %}{{ post.usuario.username }}{% endif %}</div>
+                        <div class="post-date">{{ post.fecha_creacion|timesince }}</div>
+                    </div>
+                </div>
+                <div class="post-body" style="margin-top: 10px;">
+                    <p>{{ post.contenido }}</p>
                 </div>
             </div>
-            
-            <div class="post-body">
-                <p>{{ post.contenido }}</p>
-            </div>
+
+            {% if post.archivo %}
+    <!-- 🆕 Validamos si el archivo es un video MP4 -->
+                {% if post.archivo.url|lower|slice:"-4:" == ".mp4" %}
+                    <video controls style="width: 100%; max-height: 450px; border-radius: 8px; margin-top: 10px; background-color: #000;">
+                        <source src="{{ post.archivo.url }}" type="video/mp4">
+                        Tu navegador no soporta la reproducción de video.
+                    </video>
+                {% else %}
+        <!-- Si no es video, se renderiza como imagen normal -->
+                    <img src="{{ post.archivo.url }}" class="post-image" style="width: 100%; max-height: 500px; object-fit: cover; border-radius: 8px; margin-top: 10px;">
+                {% endif %}
+            {% endif %}
             
             <div class="post-actions">
                 <form method="POST" action="{% url 'dar_like' post.id %}" style="flex-grow: 1; display: flex;">
                     {% csrf_token %}
-                    <button type="submit" class="btn-action" style="color: {% if request.user in post.likes.all %}var(--primary-color){% else %}var(--text-muted){% endif %}; width: 100%;">
+                    <button type="submit" class="btn-action" style="color: {% if request.user in post.likes.all %}var(--primary-color){% else %}var(--text-muted){% endif %}; font-weight: bold; width: 100%;">
                         👍 {% if request.user in post.likes.all %}Ya no me gusta{% else %}Me gusta{% endif %} 
-                        <span style="font-weight: normal; color: var(--text-muted);">({{ post.total_likes }})</span>
+                        <span>({{ post.total_likes }})</span>
                     </button>
                 </form>
-
-                <button class="btn-action">💬 Comentar</button>
-                
-                <button class="btn-action" onclick="alert('¡Enlace de la publicación de {{ post.usuario.username }} copiado al portapapeles!')">↩️ Compartir</button>
+                <form method="POST" action="{% url 'compartir_post' post.id %}" style="flex-grow: 1; display: flex;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-action" style="width: 100%;">
+                        🔄 Compartir
+                    </button>
+                </form>
             </div>
 
             <div class="comments-section">
                 <div class="comments-list">
                     {% for comentario in post.comentarios.all %}
                         <div class="comment-bubble">
-                            <span class="comment-user">{{ comentario.usuario.username }}</span>
+                            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                                {% if comentario.usuario.perfil.avatar %}
+                                    <img src="{{ comentario.usuario.perfil.avatar.url }}" class="avatar" style="width:24px; height:24px; object-fit: cover;">
+                                {% else %}
+                                    <div class="avatar" style="width:24px; height:24px; background-color: var(--primary-color);"></div>
+                                {% endif %}
+                                <span class="comment-user">{% if comentario.usuario.first_name %}{{ comentario.usuario.first_name }} {{ comentario.usuario.last_name }}{% else %}{{ comentario.usuario.username }}{% endif %}</span>
+                            </div>
                             <p class="comment-text">{{ comentario.contenido }}</p>
-                            <span class="comment-date">{{ comentario.fecha_creacion|timesince }}</span>
+                            {% if comentario.imagen %}
+                            <img src="{{ comentario.imagen.url }}" style="max-width: 200px; max-height: 150px; border-radius: 8px; display: block; margin-top: 5px; border: 1px solid var(--border-color);">
+                            {% endif %}
                         </div>
                     {% empty %}
-                        <p style="color: var(--text-muted); font-size: 13px; font-style: italic; padding-left: 4px;">Nadie ha comentado aún. ¡Sé el primero!</p>
+                        <p style="color: var(--text-muted); font-size: 13px; font-style: italic;">Nadie ha comentado aún.</p>
                     {% endfor %}
                 </div>
 
-                <form method="POST" action="{% url 'agregar_comentario' post.id %}" class="comment-form">
+                <form method="POST" action="{% url 'agregar_comentario' post.id %}" enctype="multipart/form-data" class="comment-form">
                     {% csrf_token %}
-                    <input type="text" name="contenido_comentario" class="comment-input" placeholder="Escribe un comentario..." required>
+                    <input type="text" name="contenido_comentario" class="comment-input" placeholder="Escribe un comentario...">
+                    <label style="cursor: pointer; font-size: 16px;" title="Adjuntar imagen al comentario">
+                        📷
+                        <input type="file" name="imagen_comentario" accept="image/*" style="display: none;">
+                    </label>
                     <button type="submit" class="btn-comment-submit">Enviar</button>
                 </form>
             </div>
-
         </div>
         {% empty %}
         <div class="card">
-            <p style="color: var(--text-muted); text-align: center; font-style: italic;">Aún no hay publicaciones en la red. ¡Sé el primero en escribir algo!</p>
+            <p style="color: var(--text-muted); text-align: center; font-style: italic;">No hay publicaciones disponibles.</p>
         </div>
         {% endfor %}
 
     </main>
-
 </body>
 </html>
