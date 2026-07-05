@@ -21,9 +21,10 @@ def feed_home(request):
 
     # 3. Lógica del buscador y Posts del Feed (Ordenados de más reciente a más antiguo)
     busqueda = request.GET.get('q')
-    usuarios_encontrados = None
+    usuarios_encontrados = []
     
-    if busqueda:
+    if busqueda:  # 👈 ¡ESTE CONDICIONAL EVITA EL ERROR DE NONE!
+        usuarios_encontrados = User.objects.filter(username__icontains=busqueda).exclude(id=request.user.id)
         todos_los_posts = Publicacion.objects.filter(
             Q(contenido__icontains=busqueda) | Q(usuario__username__icontains=busqueda)
         ).order_by('-fecha_creacion')  # 👈 Asegúrate de si tu campo es 'fecha_creacion' o 'fecha_publicacion'

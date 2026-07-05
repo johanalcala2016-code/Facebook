@@ -67,14 +67,20 @@
         .comment-form { display: flex; gap: 8px; align-items: center; }
         .comment-input { flex-grow: 1; padding: 8px 14px; border: 1px solid var(--border-color); border-radius: 20px; font-size: 13px; outline: none; background: var(--bg-card); }
         .btn-comment-submit { background: var(--text-main); color: white; border: none; padding: 6px 12px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 13px; }
+
+        .status-badge { width: 10px; height: 10px; border-radius: 50%; display: inline-block; border: 1.5px solid white; }
+        .status-online { background-color: #2ecc71; box-shadow: 0 0 6px #2ecc71; }
+        .status-offline { background-color: #95a5a6; }
     </style>
 </head>
 <body>
 
     <nav class="navbar">
         <a href="{% url 'feed' %}" class="nav-logo" style="color: var(--primary-color);">facebook 2</a>
-        <form method="GET" action="{% url 'feed' %}" class="search-bar">
-            <input type="text" name="q" placeholder="Buscar amigos o publicaciones..." value="{{ busqueda|default:'' }}">
+        <!-- Busca tu formulario de búsqueda en la barra superior y déjalo así: -->
+        <form method="GET" action="{% url 'feed' %}">
+                    <input type="text" name="q" placeholder="Buscar..." value="{{ busqueda|default:'' }}">
+                    <button type="submit">Buscar</button>
         </form>
         <div class="nav-profile" style="display: flex; align-items: center; gap: 12px;">
             <div style="display: flex; align-items: center; gap: 8px;">
@@ -115,14 +121,17 @@
             </div>
         </div>
         {% endif %}
-
+        
         <div class="card widgets-section">
             <div>
                 <div class="widget-title">Solicitudes de Amistad</div>
                 {% for sol in solicitudes %}
                 <div class="widget-item">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <div class="avatar" style="width:32px; height:32px;"></div>
+                    <div style="display: flex; align-items: center; gap: 8px; position: relative;">
+                        <div style="position: relative;">
+                            <div class="avatar" style="width:32px; height:32px;"></div>
+                            <span class="status-badge {% if sol.remitente.perfil.esta_online %}status-online{% else %}status-offline{% endif %}" style="position: absolute; bottom: 0; right: 0;"></span>
+                        </div>
                         <span style="font-size: 14px; font-weight: 600;">{{ sol.remitente.username }}</span>
                     </div>
                     <form method="POST" action="{% url 'aceptar_solicitud' sol.id %}">
