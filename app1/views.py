@@ -8,7 +8,8 @@ from .models import Publicacion, Comentario, SolicitudAmistad, Perfil, Publicaci
 
 @login_required
 def feed_home(request):
-    # 1. Lógica para crear una nueva historia
+    print("--- RECARGANDO VISTAS ---") # 👈 Agrega esta línea temporal aquí
+    # ... resto de tu código de feed_home ...
     if request.method == 'POST' and 'subir_historia' in request.POST:
         archivo_historia = request.FILES.get('archivo_historia')
         if archivo_historia:
@@ -48,8 +49,8 @@ def feed_home(request):
     return render(request, 'feed.html', contexto)
 
 @login_required
-def dar_like(request, post_id):
-    if request.method == 'POST':
+def dar_like_post(request, post_id):
+    if request.method == "POST" and request.user.is_authenticated:
         post = get_object_or_404(Publicacion, id=post_id)
         if post.likes.filter(id=request.user.id).exists():
             post.likes.remove(request.user)
@@ -119,4 +120,4 @@ def compartir_post(request, post_id):
         )
         
     return redirect('feed')
-# Create your views here.
+# Create your views here. 

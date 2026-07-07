@@ -52,6 +52,7 @@ class Publicacion(models.Model):
         
     def total_likes(self):
         return self.likes.count()
+    
 
 class Comentario(models.Model):
     publicacion = models.ForeignKey(Publicacion, on_delete=models.CASCADE, related_name='comentarios')

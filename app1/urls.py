@@ -5,7 +5,7 @@ from . import views
 
 urlpatterns = [
     path('', views.feed_home, name='feed'),
-    path('like/<int:post_id>/', views.dar_like, name='dar_like'),
+    path('like/<int:post_id>/', views.dar_like_post, name='dar_like'),
     path('comentar/<int:post_id>/', views.agregar_comentario, name='agregar_comentario'),
     path('solicitud/aceptar/<int:solicitud_id>/', views.aceptar_solicitud, name='aceptar_solicitud'),
     path('solicitud/enviar/<int:usuario_id>/', views.enviar_solicitud, name='enviar_solicitud'),
@@ -13,4 +13,5 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
     path('post/compartir/<int:post_id>/', views.compartir_post, name='compartir_post'),
+    path('post/<int:post_id>/like/', views.dar_like_post, name='dar_like_post'),
 ]
