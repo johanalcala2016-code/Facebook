@@ -57,10 +57,12 @@ ROOT_URLCONF = 'facebook.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        # 🆕 Añadimos la ruta de tu carpeta global aquí:
+        'DIRS': [BASE_DIR / 'templates'], 
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -126,4 +128,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # 🆕 Configuración de redirección de sesiones
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'feed'
+LOGIN_REDIRECT_URL = 'feed_home'  # 🆕 Cambiado de 'feed' a 'feed_home'
+LOGOUT_REDIRECT_URL = 'login'

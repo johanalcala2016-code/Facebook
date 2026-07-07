@@ -76,9 +76,9 @@
 <body>
 
     <nav class="navbar">
-        <a href="{% url 'feed' %}" class="nav-logo" style="color: var(--primary-color);">facebook 2</a>
+        <a href="{% url 'feed_home' %}" class="nav-logo" style="color: var(--primary-color);">facebook 2</a>
         <!-- Busca tu formulario de búsqueda en la barra superior y déjalo así: -->
-        <form method="GET" action="{% url 'feed' %}">
+        <form method="GET" action="{% url 'feed_home' %}">
                     <input type="text" name="q" placeholder="Buscar..." value="{{ busqueda|default:'' }}">
                     <button type="submit">Buscar</button>
         </form>
@@ -179,7 +179,7 @@
         </div>
 
         <div class="card">
-            <form method="POST" action="{% url 'feed' %}" enctype="multipart/form-data" class="create-post-form">
+            <form method="POST" action="{% url 'feed_home' %}" enctype="multipart/form-data" class="create-post-form">
                 {% csrf_token %}
                 <div style="display: flex; gap: 12px; align-items: center;">
                 {% if request.user.perfil.avatar %}

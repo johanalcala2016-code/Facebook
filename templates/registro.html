@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Cuenta - facebook 2</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .register-container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 450px; border-top: 5px solid turquoise; }
+        h2 { color: #333; text-align: center; margin-bottom: 20px; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; margin-bottom: 4px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .btn-register { width: 100%; background-color: turquoise; color: #333; font-weight: bold; border: none; padding: 12px; cursor: pointer; border-radius: 4px; font-size: 16px; margin-top: 10px; }
+        .error-msg { color: red; font-size: 14px; margin-bottom: 10px; }
+        .link-login { display: block; text-align: center; margin-top: 15px; color: #008b8b; text-decoration: none; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="register-container">
+    <h2>Regístrate en facebook 2</h2>
+    
+    <form method="POST">
+        {% csrf_token %}
+        
+        {% if form.errors %}
+            <div class="error-msg">
+                Por favor, corrige los errores del formulario.
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <span class="error-msg">{{ field.errors.0 }}</span>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn-register">Crear cuenta nueva</button>
+    </form>
+    
+    <a href="{% url 'login' %}" class="link-login">¿Ya tienes una cuenta? Inicia sesión aquí</a>
+</div>
+
+</body>
+</html>

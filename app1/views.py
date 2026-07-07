@@ -1,11 +1,34 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.auth import login
 from django.contrib import messages
 from django.db.models import Q
 from django.utils import timezone
 from datetime import timedelta
 from .models import Publicacion, Comentario, SolicitudAmistad, Perfil, PublicacionCompartida, Historia # 🆕 Añadido Historia
+from .forms import RegistroUsuarioForm
+
+def registrar_usuario(request):
+    """
+    Crea un nuevo usuario, guarda su nombre/apellido, 
+    y lo loguea automáticamente en la sesión.
+    """
+    if request.method == 'POST':
+        form = RegistroUsuarioForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            # Encriptar la contraseña de forma segura
+            user.set_password(form.cleaned_data['password'])
+            user.save() # Aquí se dispara tu señal post_save para crear el Perfil
+            
+            # Loguear automáticamente tras registrarse
+            login(request, user)
+            return redirect('feed_home')
+    else:
+        form = RegistroUsuarioForm()
+        
+    return render(request, 'registro.html', {'form': form})
 
 @login_required
 def feed_home(request):
@@ -15,7 +38,7 @@ def feed_home(request):
         archivo_historia = request.FILES.get('archivo_historia')
         if archivo_historia:
             Historia.objects.create(usuario=request.user, archivo=archivo_historia)
-        return redirect('feed')
+        return redirect('feed_home')
 
     # 2. Filtro de historias de las últimas 24 horas
     hace_24_horas = timezone.now() - timedelta(hours=24)
@@ -57,7 +80,7 @@ def dar_like_post(request, post_id):
             post.likes.remove(request.user)
         else:
             post.likes.add(request.user)
-    return redirect('feed')
+    return redirect('feed_home')
 
 @login_required
 def agregar_comentario(request, post_id):
@@ -73,7 +96,7 @@ def agregar_comentario(request, post_id):
                 contenido=texto if texto else "",
                 imagen=imagen_subida
             )
-    return redirect('feed')
+    return redirect('feed_home')
 
 @login_required
 def aceptar_solicitud(request, solicitud_id):
@@ -85,14 +108,14 @@ def aceptar_solicitud(request, solicitud_id):
         perfil_receptor.amigos.add(solicitud.remitente)
         perfil_emisor.amigos.add(request.user)
         solicitud.delete()
-    return redirect('feed')
+    return redirect('feed_home')
 
 @login_required
 def enviar_solicitud(request, usuario_id):
     if request.method == 'POST':
         target_user = get_object_or_404(User, id=usuario_id)
         SolicitudAmistad.objects.get_or_create(remitente=request.user, destinatario=target_user)
-    return redirect('feed')
+    return redirect('feed_home')
 
 @login_required
 def eliminar_post(request, post_id):
@@ -100,7 +123,7 @@ def eliminar_post(request, post_id):
         # Buscamos el post, asegurándonos de que pertenezca al usuario que intenta borrarlo
         post = get_object_or_404(Publicacion, id=post_id, usuario=request.user)
         post.delete()
-    return redirect('feed')
+    return redirect('feed_home')
 
 @login_required
 def compartir_post(request, post_id):
@@ -120,5 +143,5 @@ def compartir_post(request, post_id):
             publicacion_original=post_original
         )
         
-    return redirect('feed')
+    return redirect('feed_home')
 # Create your views here. 
