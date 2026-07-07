@@ -14,4 +14,5 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
     path('post/compartir/<int:post_id>/', views.compartir_post, name='compartir_post'),
     path('post/<int:post_id>/like/', views.dar_like_post, name='dar_like_post'),
+    path('post/eliminar/<int:post_id>/', views.eliminar_post, name='eliminar_post'),
 ]

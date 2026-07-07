@@ -252,6 +252,16 @@
                 <button class="btn-action" style="flex-grow: 1;" onclick="copiarEnlace('{{ request.meta.HTTP_HOST }}/post/{{ post.id }}', this)">
                     🔗 Copiar Enlace
                 </button>
+                <div class="post-actions">
+                    {% if post.usuario == request.user %}
+                        <form action="{% url 'eliminar_post' post.id %}" method="POST" style="margin: 0;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar de forma permanente esta publicación?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-eliminar" style="background-color: #ff4d4d; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">
+                                Eliminar
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
             </div>
 
             <div class="comments-section">
