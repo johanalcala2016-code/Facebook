@@ -31,8 +31,23 @@ def registrar_usuario(request):
     return render(request, 'registro.html', {'form': form})
 
 @login_required
+# app1/views.py
+
+@login_required
 def feed_home(request):
-    print("--- RECARGANDO VISTAS ---") # 👈 Agrega esta línea temporal aquí
+    # ➡️ 1. CAPTURAR Y CREAR NUEVA PUBLICACIÓN (Movido aquí arriba)
+    if request.method == 'POST' and 'contenido_post' in request.POST:
+        texto = request.POST.get('contenido_post')
+        imagen = request.FILES.get('archivo')
+        
+        if texto or imagen:
+            Publicacion.objects.create(
+                usuario=request.user,
+                contenido=texto,
+                archivo=imagen
+            )
+            return redirect('feed_home')
+    
     # ... resto de tu código de feed_home ...
     if request.method == 'POST' and 'subir_historia' in request.POST:
         archivo_historia = request.FILES.get('archivo_historia')
@@ -53,9 +68,15 @@ def feed_home(request):
         todos_los_posts = Publicacion.objects.filter(
             Q(contenido__icontains=busqueda) | Q(usuario__username__icontains=busqueda)
         ).order_by('-fecha_creacion')  # 👈 Asegúrate de si tu campo es 'fecha_creacion' o 'fecha_publicacion'
+
+        posts_compartidos = PublicacionCompartida.objects.filter(
+            Q(publicacion_original__contenido__icontains=busqueda) | 
+            Q(usuario_que_comparte__username__icontains=busqueda)
+        ).order_by('-fecha_compartido')
     else:
         # Aquí es donde va lo que buscabas originalmente:
         todos_los_posts = Publicacion.objects.all().order_by('-fecha_creacion')
+        posts_compartidos = PublicacionCompartida.objects.all().order_by('-fecha_compartido')
 
     # 4. Otras consultas necesarias
     solicitudes = SolicitudAmistad.objects.filter(destinatario=request.user)
@@ -64,6 +85,7 @@ def feed_home(request):
     # 5. UN SOLO CONTEXTO Y UN SOLO RETURN
     contexto = {
         'posts': todos_los_posts,
+        'posts_compartidos': posts_compartidos,
         'historias': historias_activas,
         'solicitudes': solicitudes,
         'mis_amigos': mis_amigos,

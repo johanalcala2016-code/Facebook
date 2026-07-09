@@ -19,6 +19,17 @@ class Perfil(models.Model):
         if self.ultima_conexion:
             return timezone.now() - self.ultima_conexion < timezone.timedelta(minutes=5)
         return False
+    
+    def nombre_completo(self):
+        """
+        Devuelve el nombre y apellido combinados si existen.
+        De lo contrario, recurre al nombre de usuario.
+        """
+        if self.usuario.first_name and self.usuario.last_name:
+            return f"{self.usuario.first_name} {self.usuario.last_name}"
+        elif self.usuario.first_name:
+            return self.usuario.first_name
+        return self.usuario.username
 
 @receiver(post_save, sender=User)
 def crear_perfil_usuario(sender, instance, created, **kwargs):
