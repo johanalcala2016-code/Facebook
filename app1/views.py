@@ -91,6 +91,7 @@ def feed_home(request):
         'mis_amigos': mis_amigos,
         'busqueda': busqueda,
         'usuarios_encontrados': usuarios_encontrados,
+        'mis_amigos': request.user.perfil.amigos.all(),
     }
     return render(request, 'feed.html', contexto)
 

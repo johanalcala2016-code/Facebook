@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -85,12 +86,19 @@
     
     <div class="nav-profile" style="display: flex; align-items: center; gap: 12px;">
         <div class="user-profile-menu" style="display: flex; align-items: center; gap: 8px;">
-            {% if request.user.perfil.avatar %}
-                <img src="{{ request.user.perfil.avatar.url }}" alt="Avatar" class="navbar-avatar avatar" style="width:30px; height:30px; object-fit: cover;">
+            {% if request.user.perfil.avatar and request.user.perfil.avatar.url %}
+                <img src="{{ request.user.perfil.avatar.url }}" 
+                    class="avatar" 
+                    style="object-fit: cover; width: 30px; height: 30px; border-radius: 50%;" 
+                    alt="Avatar"
+                    onerror="this.onerror=null; this.src='{% static 'images/default-avatar.png' %}';">
             {% else %}
-                <div class="avatar" style="width:30px; height:30px; background-color: var(--primary-color);"></div>
+                <img src="{% static 'images/default-avatar.png' %}" 
+                    class="avatar" 
+                    style="object-fit: cover; width: 30px; height: 30px; border-radius: 50%;" 
+                    alt="Avatar">
             {% endif %}
-            <span>Bienvenido, <strong>{{ request.user.perfil.nombre_completo|default:request.user.username }}</strong></span>
+            <strong>Bienvenido, {{ request.user.perfil.nombre_completo|default:request.user.username }}</strong>
         </div>
 
         <form method="POST" action="{% url 'logout' %}" style="display: inline;">
@@ -100,41 +108,50 @@
     </div>
 </nav>
 
-<main class="main-container">
+<main class="main-container" style="max-width: 600px; margin: 20px auto; padding: 0 15px; display: flex; flex-direction: column; gap: 20px;">
     
-    {% if busqueda %}
-    <div class="card">
-        <div class="widget-title">Usuarios encontrados para: "{{ busqueda }}"</div>
-        <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
-            {% for u in usuarios_encontrados %}
-            <div class="widget-item">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <div class="avatar" style="width: 35px; height: 35px;"></div>
-                    <span style="font-weight: 600;">{{ u.username }}</span>
-                </div>
-                <form method="POST" action="{% url 'enviar_solicitud' u.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn-widget">Agregar Amigo</button>
-                </form>
-            </div>
-            {% empty %}
-            <p style="color: var(--text-muted); font-size: 13px; font-style: italic;">No se encontraron nuevos usuarios con ese nombre.</p>
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
-    
-    <div class="card widgets-section">
-        <div>
-            <div class="widget-title">Solicitudes de Amistad</div>
-            {% for sol in solicitudes %}
-            <div class="widget-item">
-                <div style="display: flex; align-items: center; gap: 8px; position: relative;">
-                    <div style="position: relative;">
-                        <div class="avatar" style="width:32px; height:32px;"></div>
-                        <span class="status-badge {% if sol.remitente.perfil.esta_online %}status-online{% else %}status-offline{% endif %}" style="position: absolute; bottom: 0; right: 0;"></span>
+    <div style="display: flex; flex-direction: column; gap: 20px; min-width: 0;">
+
+    <div class="columna-contenido-principal" style="flex: 2; min-width: 0; display: flex; flex-direction: column; gap: 20px;">
+        
+        {% if busqueda %}
+        <div class="card" style="width: 100%;">
+            <div class="widget-title">Usuarios encontrados para: "{{ busqueda }}"</div>
+            <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
+                {% for u in usuarios_encontrados %}
+                <div class="widget-item">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div class="avatar" style="width: 35px; height: 35px;"></div>
+                        <span style="font-weight: 600;">{{ u.username }}</span>
                     </div>
-                    <span style="font-size: 14px; font-weight: 600;">{{ sol.remitente.username }}</span>
+                    <form method="POST" action="{% url 'enviar_solicitud' u.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-widget">Agregar Amigo</button>
+                    </form>
+                </div>
+                {% empty %}
+                <p style="color: var(--text-muted); font-size: 13px; font-style: italic;">No se encontraron nuevos usuarios con ese nombre.</p>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        </div> <div class="columna-lateral-derecha" style="flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 20px; position: sticky; top: 20px;">
+        
+    </div> <div style="position: absolute; top: 100px; right: calc(50% - 580px); width: 300px; display: flex; flex-direction: column; gap: 20px;">
+        
+        <div class="card widgets-section" style="padding: 15px; margin: 0;">
+            <div class="widget-title" style="font-size: 15px; font-weight: bold; margin-bottom: 12px; color: var(--text-main);">
+                Solicitudes de Amistad
+            </div>
+            {% for sol in solicitudes %}
+            <div class="widget-item" style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <div style="position: relative;">
+                        <img src="{% static 'images/default-avatar.png' %}" class="avatar" style="width:32px; height:32px; border-radius: 50%;">
+                        <span class="status-badge {% if sol.remitente.perfil.esta_online %}status-online{% else %}status-offline{% endif %}" style="position: absolute; bottom: 0; right: 0; width: 8px; height: 8px; border-radius: 50%;"></span>
+                    </div>
+                    <span style="font-size: 14px; font-weight: 600; color: var(--text-main);">{{ sol.remitente.username }}</span>
                 </div>
                 <form method="POST" action="{% url 'aceptar_solicitud' sol.id %}">
                     {% csrf_token %}
@@ -145,6 +162,32 @@
             <p style="color: var(--text-muted); font-size: 13px; font-style: italic; margin-top: 5px;">No tienes solicitudes pendientes.</p>
             {% endfor %}
         </div>
+
+        <div class="card amigos-sidebar" style="border: 1px solid var(--border-color); padding: 15px; margin: 0;">
+            <h3 style="color: var(--primary-color); font-size: 16px; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px;">
+                👥 Mis Amigos ({{ mis_amigos.count }})
+            </h3>
+            <div class="amigos-lista" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto;">
+                {% for amigo in mis_amigos %}
+                    <div class="amigo-item" style="display: flex; align-items: center; gap: 10px;">
+                        {% if amigo.perfil.avatar and amigo.perfil.avatar.url %}
+                            <img src="{{ amigo.perfil.avatar.url }}" class="avatar" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;" onerror="this.onerror=null; this.src='{% static 'images/default-avatar.png' %}';">
+                        {% else %}
+                            <img src="{% static 'images/default-avatar.png' %}" class="avatar" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;">
+                        {% endif %}
+                        <div style="display: flex; flex-direction: column;">
+                            <span style="font-size: 14px; font-weight: 600; color: var(--text-main);">
+                                {{ amigo.perfil.nombre_completo|default:amigo.username }}
+                            </span>
+                            <small class="text-muted" style="font-size: 11px;">@{{ amigo.username }}</small>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="text-muted" style="font-size: 13px; text-align: center;">Aún no tienes amigos agregados.</p>
+                {% endfor %}
+            </div>
+        </div>
+
     </div>
 
     <div class="stories-container" style="display: flex; gap: 12px; padding: 15px; background: white; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 20px; overflow-x: auto;">
@@ -183,7 +226,7 @@
             {% if request.user.perfil.avatar %}
                 <img src="{{ request.user.perfil.avatar.url }}" class="avatar" style="object-fit: cover;">
             {% else %}
-                <div class="avatar" style="background-color: var(--primary-color);"></div>
+                <img src="{% static 'images/default-avatar.png' %}" class="avatar" style="object-fit: cover;">
             {% endif %}
                 <input type="text" name="contenido_post" class="create-post-input" placeholder="¿Qué estás pensando, {{ request.user.username }}?" required>
             </div>
@@ -202,19 +245,28 @@
         <div class="post-padding">
             
             <div class="post-header" style="display: flex; align-items: center; gap: 10px;">
-                {% if post.usuario.perfil.avatar %}
-                    <img src="{{ post.usuario.perfil.avatar.url }}" class="avatar" style="object-fit: cover;">
-                {% else %}
-                    <div class="avatar" style="background-color: var(--primary-color);"></div>
-                {% endif %}
-                <div>
-                    <div>
-                        <strong>{{ post.usuario.perfil.nombre_completo|default:post.usuario.username }}</strong>
-                        <span class="text-muted" style="font-size: 13px; margin-left: 4px;">@{{ post.usuario.username }}</span>
-                    </div>
-                    <div class="post-date" style="font-size: 11px; color: var(--text-muted);">{{ post.fecha_creacion|timesince }}</div>
-                </div>
-            </div>
+    
+    {% if post.usuario.perfil.avatar %}
+        <img src="{{ post.usuario.perfil.avatar.url }}" 
+            class="avatar" 
+            style="object-fit: cover; width: 40px; height: 40px; border-radius: 50%;" 
+            alt="Avatar"
+            onerror="this.onerror=null; this.src='{% static 'images/default-avatar.png' %}';">
+    {% else %}
+        <img src="{% static 'images/default-avatar.png' %}" 
+            class="avatar" 
+            style="object-fit: cover; width: 40px; height: 40px; border-radius: 50%;" 
+            alt="Avatar">
+    {% endif %}
+    
+    <div>
+        <div>
+            <strong>{{ post.usuario.perfil.nombre_completo|default:post.usuario.username }}</strong>
+            <span class="text-muted" style="font-size: 13px; margin-left: 4px;">@{{ post.usuario.username }}</span>
+        </div>
+        <div class="post-date" style="font-size: 11px; color: var(--text-muted);">{{ post.fecha_creacion|timesince }}</div>
+    </div>
+</div>
 
             <div class="post-body" style="margin-top: 10px;">
                 <p>{{ post.contenido }}</p>
@@ -302,10 +354,17 @@
     <p class="text-muted text-center">No hay publicaciones originales aún.</p>
 {% endfor %}  {% for compartido in posts_compartidos %}
     <div class="card shared-post-card" style="border: 1px dashed turquoise; padding: 15px; margin-top: 15px;">
-        <p>
-            <strong>{{ compartido.usuario_que_comparte.perfil.nombre_completo|default:compartido.usuario_que_comparte.username }}</strong> 
-            compartió la publicación de {{ compartido.publicacion_original.usuario.perfil.nombre_completo|default:compartido.publicacion_original.usuario.username }}:
-        </p> <div class="original-content" style="margin-left: 15px; border-left: 2px solid turquoise; padding-left: 10px; margin-top: 10px;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+            
+            <img src="{{ compartido.usuario_que_comparte.perfil.url_avatar }}" class="avatar" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover;" alt="Avatar">
+            
+            <p style="margin: 0;">
+                <strong>{{ compartido.usuario_que_comparte.perfil.nombre_completo|default:compartido.usuario_que_comparte.username }}</strong> 
+                compartió la publicación de {{ compartido.publicacion_original.usuario.perfil.nombre_completo|default:compartido.publicacion_original.usuario.username }}:
+            </p>
+        </div>
+        
+        <div class="original-content" style="margin-left: 15px; border-left: 2px solid turquoise; padding-left: 10px; margin-top: 10px;">
             {{ compartido.publicacion_original.contenido }}
         </div>
     </div>

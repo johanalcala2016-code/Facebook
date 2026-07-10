@@ -4,10 +4,13 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.validators import FileExtensionValidator
 from django.utils import timezone
+# app1/models.py (Línea 1, añade esto arriba del todo)
+import os
+from django.conf import settings  # Asegúrate de tener también este si no lo habías puesto
 
 class Perfil(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='perfil')
-    avatar = models.ImageField(upload_to='avatars/', default='avatars/default.png', blank=True, null=True)
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     amigos = models.ManyToManyField(User, related_name='mis_amigos', blank=True)
     ultima_conexion = models.DateTimeField(default=timezone.now) # 🆕 Campo para rastrear el estado Online
 
@@ -30,6 +33,15 @@ class Perfil(models.Model):
         elif self.usuario.first_name:
             return self.usuario.first_name
         return self.usuario.username
+        
+    @property
+    def url_avatar(self):
+        if self.avatar and hasattr(self.avatar, 'url'):
+            ruta_fisica = os.path.join(settings.MEDIA_ROOT, self.avatar.name)
+            if os.path.exists(ruta_fisica):
+                return self.avatar.url
+                
+        return '/static/images/default-avatar.png'
 
 @receiver(post_save, sender=User)
 def crear_perfil_usuario(sender, instance, created, **kwargs):
